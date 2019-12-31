@@ -1,0 +1,16 @@
+# Compiled class file
+*.class
+
+# Database (too big)
+*.db
+
+# Log Files
+*.log
+
+# Compiled class file
+reports/*
+!reports/.gitkeep
+
+# result file
+results/*
+!results/.gitkeep

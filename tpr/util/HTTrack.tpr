@@ -1,0 +1,67 @@
+#
+# main script for executing "HTTrack"
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.27
+#
+
+Include "..\func\Image.tpr"
+
+# Procedure definition.
+# Excepted parameters are:
+# {1} ... textfile to use in HTTrack
+# {2} ... waittime
+Procedure func_HTTrack_setting {
+    # start httrack
+    Press "Alt+N" wait="{2}"
+
+    # set folder or something
+    Paste "{web}" wait="{2}"
+    Press "Tab" wait="{2}" count="2"
+    Paste "C:\HTTrackLog" wait="{2}"
+    Press "Alt+N" wait="{2}"
+
+    # set URL list
+    Press "Tab" wait="{2}" count="3"
+    Paste "{1}" wait="{2}"
+
+    # Preferences and mirror options (Set Option)
+    Press "Tab" wait="{2}" count="2"
+    Press "Enter"
+    Press "Shift+Tab"
+    Press "Right" wait="{2}"
+    Press "Tab" wait="{2}" count="4"
+    Paste "+*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar" wait="{2}"
+    Press "Tab" wait="{2}" count="3"
+    Press "Enter"
+
+    # go to next page
+    Press "Alt+N"
+
+    # completed
+    Press "Shift+Tab" count="3"
+    Press "Enter"
+}
+
+# Procedure definition.
+Procedure main_HTTrack_start {
+   # Open HTTrack
+   Exec "\"C:\Program Files\WinHTTrack\WinHTTrack.exe\"" wait="1s"
+
+   # Edit setting and Execute
+   func_HTTrack_setting "{_PROJECT_DIR}\results\hreflist.txt" "1s"
+}
+
+# Procedure definition.
+Procedure main_HTTrack_finish {
+    # Wait for completion of saving page source
+   func_image_match "HTTrack\01-complete" "1m"
+   Wait "3s"
+
+   # Close HTTrack
+   func_image_click "HTTrack\02-close" "3s"
+   Wait "3s"
+   
+   # create new directory and move html files to results folder
+   Exec "\"{_PROJECT_DIR}\bat\HTTrack.bat\" \"{web}\""
+}

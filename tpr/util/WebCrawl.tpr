@@ -1,0 +1,38 @@
+#
+# main script for executing "vp-2.0.0.jar" to get all job info
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.27
+#
+
+Include "..\func\SelectWeb.tpr"
+
+# Procedure definition.
+Procedure main_webcrawl {
+    # Select website by using console
+    func_selectWeb
+
+    if ({web} == "") {
+        Exit 0
+    }
+
+    # web-crawling by using jar file (filename = \jar\vp-2.0.0.jar)
+    Exec "cmd.exe /C start {_PROJECT_DIR}\bat\JarStart.bat" wait="1s"
+
+    # input website name (*auto)
+    Paste "{web}"
+    Press "Enter" wait="1s"
+
+    # input new or all (*auto)
+    Paste "{new_all}"
+    Press "Enter" wait="1s"
+
+    # select whether set directory on manual (*auto)
+    # if jar file doesnt work you should try to use "Y" and set dir on manual
+    Paste "N"
+    Press "Enter" wait="1s"
+
+    # select whether export progress status for log file or display it on command (*auto)
+    Paste "N"
+    Press "Enter"
+}

@@ -1,0 +1,47 @@
+#
+# func script for the part of using image
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.09
+#
+
+# Procedure definition.
+# Expected parameters are:
+# {1} ... image file
+# {2} ... waittime
+Procedure func_image_match {
+    for ( ; 0==0 ; ) {
+        Compareto "{1}" passrate="90" method="search2"
+        if ({_EXIT_CODE} == 0) {
+            break
+        } else {
+            Wait "{2}"
+        }
+    }
+}
+
+# Procedure definition.
+# Expected parameters are:
+# {1} ... image file
+# {2} ... waittime
+Procedure func_image_mismatch {
+    for ( ; 0==0 ; ) {
+        Compareto "{1}" passrate="90" method="search2"
+        if ({_EXIT_CODE} == 0) {
+            Wait "{2}"
+        } else {
+            break
+        }
+    }
+}
+
+
+# Procedure definition.
+# Expected Parameters are:
+# {1} ... image file (passrate=90)
+# {2} ... waittime
+Procedure func_image_click {
+    func_image_match "{1}" "{2}"
+    Click "image" passrate="90" template="{1}"
+    Wait "1s"
+}

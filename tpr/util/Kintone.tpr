@@ -1,0 +1,69 @@
+#
+# main script for uploading data to kintone
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.27
+#
+
+Include "..\func\Image.tpr"
+
+# Procedure definition.
+# Expected parameters are:
+# {1} ... URL of kintone website
+Procedure func_kintone_open {
+    # Open Google Chrome
+    Exec "cmd.exe /C start chrome.exe" wait="1s"
+    Press "Windows+Up" wait="1s"
+    
+    # search kintone website
+    Paste "{1}"
+    Press "Enter" wait="2s"
+}
+
+# Procedure definition.
+# Expected parameters are:
+# {1} ... mail address
+# {2} ... password
+Procedure func_kintone_login {
+    func_image_click "Kintone\01-login" "3s"
+    Paste "{1}"
+    Press "Tab"
+    Paste "{2}"
+    Press "Enter"
+}
+
+# Procedure definition.
+Procedure func_kintone_upload_setting {
+    for (i=0; {i}<4; i={i}+1) {
+        func_image_click "Kintone\02-upload_setting\{i}" "1s"
+    }
+    Paste "{_PROJECT_DIR}\results\upload.csv" wait="1s"
+    Press "Alt+O"
+    
+    # charset check
+    func_image_match "Kintone\02-upload_setting\4" "1s"
+    
+    func_image_click "Kintone\02-upload_setting\5" "1s"
+    func_image_click "Kintone\02-upload_setting\6" "1s"
+}
+
+# Procedure definition.
+Procedure func_kintone_complete {
+    func_image_match "Kintone\03-check_complete"
+    Press "Alt+F4"
+}
+
+# Procedure definition.
+Procedure main_kintone {
+    # func
+    func_kintone_open "https://vp-rpa.cybozu.com/k/#/space/3"
+
+    # login
+    func_kintone_login "vprpa0906@gmail.com" "Vprpa0906"
+
+    # upload file setting
+    func_kintone_upload_setting
+
+    # check status of importing csv file
+    func_kintone_complete
+}

@@ -1,0 +1,22 @@
+#
+# func script for checking whether finished jar file
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.24
+#
+
+# Procedure definition.
+# Expected parameters are:
+# {1} ... filename
+Procedure func_jar_check {
+    for (; 0==0 ;) {
+        # ファイルコピーができるかどうかの判定により画像判定を代替するものにする
+        Exec "cmd.exe /C copy {_PROJECT_DIR}\results\{1} {_PROJECT_DIR}\results\_{1}"
+        if ({_EXIT_CODE} == 0) {
+            Exec "cmd.exe /C del {_PROJECT_DIR}\results\_{1}"
+            break
+        } else {
+            Wait "1s"
+        }
+    }
+}

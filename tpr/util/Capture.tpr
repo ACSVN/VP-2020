@@ -1,0 +1,53 @@
+#
+# main script for taking capture on Google Chrome
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.27
+#
+
+Include "..\func\Image.tpr"
+
+Procedure main_capture {
+    # preparation
+    Exec "cmd.exe /C md {_PROJECT_DIR}\results\capture\{web}"
+
+    # open Google Chrome
+    Exec "cmd.exe /C start chrome.exe" wait="1s"
+    Press "Windows+Up" wait="1s"
+    
+    # preparation for input URL
+    File "open" file="{_PROJECT_DIR}\results\hreflist.txt" id="hreflist"
+
+    for (i=1; {i}<={_FILE_LINE_COUNT}; i={i}+1){
+        # read URL
+        File "read" line="{i}" column="1" length="1" id="hreflist"
+
+        # open new window
+        Press "Ctrl+T"
+        Paste {_FILE_LINE_TEXT}
+        Press "Enter" wait="1s"
+
+        # take capture
+        func_image_match "Capture\01-chrome_check" "1s"
+        Press "Ctrl+Shift+I" wait="5s"
+        Press "Ctrl+Shift+P"
+        Paste "full"
+        Press "Enter"
+
+        # download check
+        func_image_match "Capture\02-download_check" "1s"
+
+        # close window
+        Press "Ctrl+J"
+        Press "Ctrl+W" count="2" wait="1s"
+        
+        # move png files to result folder
+        Exec "\"{_PROJECT_DIR}\bat\CaptureRen.bat\" \"{web}\""
+    }
+    
+    # close "hreflist.txt"
+    File "close" save="false" id="hreflist"
+
+    # close Google Chrome
+    Press "Alt+F4" wait="1s"
+}

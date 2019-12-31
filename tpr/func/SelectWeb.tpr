@@ -1,0 +1,90 @@
+#
+# console script for choosing website
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.20
+#
+
+# Procedure definition.
+# This source code uses java program in tpr file.
+# So dont create any class or method.
+Procedure func_selectWeb {
+    java {
+        import java.awt.Dimension;
+        import javax.swing.BoxLayout;
+        import javax.swing.JLabel;
+        import javax.swing.JPanel;
+        import javax.swing.JComboBox;
+        import javax.swing.JOptionPane;
+
+        class MyPanel {
+            private JPanel panel;
+            private JLabel label;
+            private JComboBox<String> combo;
+
+            MyPanel(String message, String[] option) {
+                panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                label = new JLabel(message);
+                panel.add(label);
+
+                combo = new JComboBox<>(option);
+                combo.setPreferredSize(new Dimension(80, 30));
+                panel.add(combo);
+            }
+
+            JPanel getPanel() {
+                return this.panel;
+            }
+
+            JComboBox getCombo() {
+                return this.combo;
+            }
+        }
+
+        String[] web_option_en = {"doda", "mynavi", "rikunabi", "en-japan", "woman-type", "type", "ecareer"};
+        String[] web_option_jp = {"Doda", "マイナビ転職", "リクナビNEXT", "エン転職", "女の転職", "Type", "イーキャリア"};
+        String[] new_option_en = {"new", "all"};
+        String[] new_option_jp = {"新着のみ取得", "全件取得"};
+
+        MyPanel webPanel = new MyPanel("取得するWebサイトを選択", web_option_jp);
+        MyPanel newPanel = new MyPanel("新着指定の選択", new_option_jp);
+
+        String br = System.getProperty("line.separator");
+
+        while (true) {
+            // ウェブサイトの選択
+            int op1 = JOptionPane.showConfirmDialog(null, webPanel.getPanel(), "Webクローラ動作設定", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (op1 == JOptionPane.OK_OPTION) {
+                // 新着指定の選択
+                int op2 = JOptionPane.showConfirmDialog(null, newPanel.getPanel(), "Webクローラ動作設定", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (op2 == JOptionPane.OK_OPTION) {
+                    // 最終確認
+                    String web = webPanel.getCombo().getSelectedItem().toString();
+                    String new_all = newPanel.getCombo().getSelectedItem().toString();
+                    String message = "対象サイト: " + web + br + "新着指定: " + new_all + br + "で実行しますか？";
+                    int op3 = JOptionPane.showConfirmDialog(null, message,"入力確認", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    if (op3 == JOptionPane.YES_OPTION) {
+                        // java受け渡し用に日本語から英語へデータの書き換え
+                        for (int i = 0; i < web_option_jp.length; i++) {
+                            if (web.equals(web_option_jp[i])) {
+                                web = web_option_en[i];
+                            }
+                        }
+                        for (int i = 0; i < new_option_jp.length; i++) {
+                            if (new_all.equals(new_option_jp[i])) {
+                                new_all = new_option_en[i];
+                            }
+                        }
+                        getContext().setVariable("web", web);
+                        getContext().setVariable("new_all", new_all);
+                        break;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+    } endjava
+}

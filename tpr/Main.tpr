@@ -1,0 +1,42 @@
+#
+# main script for this project
+# @author Akira Nose (ADDIX VIETNAM Co., Ltd)
+# @version 2.0.0
+# @date 2019.12.27
+#
+
+Include "util\WebCrawl.tpr"
+Include "util\HTTrack.tpr"
+Include "util\Capture.tpr"
+Include "util\Kintone.tpr"
+Include "util\AwsS3.tpr"
+Include "func\JarCheck.tpr"
+
+Var web=""
+Var new_all=""
+
+# Preparation (delete all result files)
+Exec "{_PROJECT_DIR}\bat\Prepare.bat"
+
+# select website and run Web-Crawler
+main_webcrawl
+
+# save page source by using "HTTrack"
+func_jar_check "hreflist.txt"
+if ({web} != "rikunabi") {
+    main_HTTrack_start
+} else {
+    main_capture
+}
+
+# upload csv file for "Kintone"
+func_jar_check "upload.csv"
+main_kintone
+
+# take capture
+if ({web} != "rikunabi") {
+    main_HTTrack_finish
+}
+
+# upload for "Aws S3"
+main_awsS3
